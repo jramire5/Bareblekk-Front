@@ -1,17 +1,8 @@
----
+
 
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+import AdminLayout from '../layouts/AdminLayout.astro';
+---
+<AdminLayout>
+  <main class="entry"><a class="brand" href="/admin/">bareblekk<span>®</span></a><h1>Your catalog starts here.</h1><p>Manage printers, categories, and product information.</p><a class="button primary" href="/admin/">Open administration <span aria-hidden="true">↗</span></a></main>
+</AdminLayout>
