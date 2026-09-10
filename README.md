@@ -2,7 +2,15 @@
 
 El sitio utiliza español como idioma único (`lang="es"`). Los textos de interfaz y las nuevas pantallas deben escribirse en español; los identificadores y valores internos de la API se conservan sin traducir.
 
-Astro + React frontend for the sibling `../Bareblekk GPT` API. The administrator workspace is available at `/admin/`. The public printer catalog is reserved for a later phase.
+Astro + React frontend for the sibling `../Bareblekk GPT` API. The public landing page is available at `/` and the administrator workspace at `/admin/`.
+
+## Landing pública
+
+La portada presenta equipos de impresión, aplicaciones, respaldo institucional y contacto, con Poppins local (Regular, Medium y Semibold), los colores oficiales y el logo original. Incluye navegación móvil, enlaces internos y selección de la aplicación de interés desde cada tarjeta.
+
+Esta primera entrega es una landing estática: las imágenes ilustran tecnologías y no representan productos publicados ni existencias en tiempo real. La integración del catálogo público con la API queda para una etapa posterior. El formulario prepara un correo a `info@bareblekk.com`, tomado de la guía de marca; la persona revisa y envía la consulta desde su aplicación de correo. No almacena datos ni simula una confirmación de envío.
+
+Las fuentes se sirven desde `public/fonts/`, con su licencia OFL. La procedencia de las fotografías se documenta en `public/images/landing/SOURCES.md`.
 
 ## Run locally
 
@@ -13,7 +21,7 @@ pnpm install
 pnpm astro dev --background
 ```
 
-Open **http://localhost:5173/admin/**. Astro proxies `/api` to `http://127.0.0.1:8787`, keeping session cookies on the frontend origin. Port 5173 matches the backend's existing origin allowlist. The server refuses to silently select another port.
+Open **http://localhost:5173/** for the landing or **http://localhost:5173/admin/** for administration. Astro proxies `/api` to `http://127.0.0.1:8787`, keeping session cookies on the frontend origin. Port 5173 matches the backend's existing origin allowlist. The server refuses to silently select another port. The landing works without the backend.
 
 Start the backend separately when you want to use real catalog data:
 
