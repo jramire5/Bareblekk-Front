@@ -1,5 +1,7 @@
 # Bareblekk catalog administration
 
+El sitio utiliza español como idioma único (`lang="es"`). Los textos de interfaz y las nuevas pantallas deben escribirse en español; los identificadores y valores internos de la API se conservan sin traducir.
+
 Astro + React frontend for the sibling `../Bareblekk GPT` API. The administrator workspace is available at `/admin/`. The public printer catalog is reserved for a later phase.
 
 ## Run locally

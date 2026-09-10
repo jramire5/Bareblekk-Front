@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { ApiError, recordPath, request } from "../lib/api";
 import {
   resources,
+  roleLabels,
+  typeLabels,
   statusLabels,
   type CatalogRecord,
   type Page,
@@ -35,8 +37,8 @@ export function Badge({
       <span aria-hidden="true">●</span>
       {resource === "attributes"
         ? row.active
-          ? "Active"
-          : "Inactive"
+          ? "Activo"
+          : "Inactivo"
         : statusLabels[status]}
     </span>
   );
@@ -74,30 +76,30 @@ function Login({
           bareblekk<span>®</span>
         </a>
         <div>
-          <p className="eyebrow">CATALOG WORKSPACE</p>
+          <p className="eyebrow">ESPACIO DEL CATÁLOGO</p>
           <h1>
-            Great products.
+            Grandes productos.
             <br />
-            Clearly presented.
+            Presentados con claridad.
           </h1>
           <p>
-            A dedicated space for the printers, details, and expertise behind
-            your catalog.
+            Un espacio dedicado a las impresoras, los detalles y la experiencia de
+            tu catálogo.
           </p>
         </div>
-        <span className="login-foot">BAREBLEKK / ADMINISTRATION</span>
+        <span className="login-foot">BAREBLEKK / ADMINISTRACIÓN</span>
       </section>
       <section className="login-panel">
         <form onSubmit={login}>
-          <p className="eyebrow">WELCOME BACK</p>
-          <h2>Sign in to your workspace</h2>
+          <p className="eyebrow">TE DAMOS LA BIENVENIDA</p>
+          <h2>Ingresá a tu espacio de trabajo</h2>
           <p className="muted">
-            Use your Bareblekk administrator or editor account.
+            Usá tu cuenta de administrador o editor de Bareblekk.
           </p>
           {error && <Notice message={error} />}
           <fieldset disabled={busy}>
             <label>
-              Email
+              Correo electrónico
               <input
                 name="email"
                 type="email"
@@ -107,7 +109,7 @@ function Login({
               />
             </label>
             <label>
-              Password
+              Contraseña
               <input
                 name="password"
                 type="password"
@@ -117,12 +119,12 @@ function Login({
               />
             </label>
             <button className="primary full" type="submit">
-              {busy ? "Signing in…" : "Sign in"}{" "}
+              {busy ? "Ingresando…" : "Iniciar sesión"}{" "}
               <span aria-hidden="true">→</span>
             </button>
           </fieldset>
           <p className="small muted">
-            Access is managed by your administrator.
+            Tu administrador gestiona el acceso.
           </p>
         </form>
       </section>
@@ -166,7 +168,7 @@ export default function Admin() {
       setEditor(null);
       setResult(null);
       setSessionError(
-        "Your session expired. Sign in again to continue. Unsaved changes were not submitted.",
+        "Tu sesión venció. Volvé a iniciar sesión para continuar. Los cambios sin guardar no se enviaron.",
       );
     };
     window.addEventListener("bareblekk:unauthenticated", expired);
@@ -251,7 +253,7 @@ export default function Admin() {
         <div className="brand">
           bareblekk<span>®</span>
         </div>
-        <p role="status">Checking your session…</p>
+        <p role="status">Verificando tu sesión…</p>
       </main>
     );
   if (!user)
@@ -269,14 +271,14 @@ export default function Admin() {
   return (
     <div className="workspace">
       <a className="skip-link" href="#main">
-        Skip to content
+        Saltar al contenido
       </a>
       <aside className="sidebar">
         <a className="brand" href="/admin/">
           bareblekk<span>®</span>
         </a>
-        <p className="workspace-label">CATALOG ADMINISTRATION</p>
-        <nav aria-label="Catalog sections">
+        <p className="workspace-label">ADMINISTRACIÓN DEL CATÁLOGO</p>
+        <nav aria-label="Secciones del catálogo">
           {(Object.keys(resources) as Resource[]).map((key) => (
             <a
               href={"#" + key}
@@ -294,11 +296,11 @@ export default function Admin() {
           ))}
         </nav>
         <div className="sidebar-note">
-          <span className="eyebrow">BUILT FOR YOUR CATALOG</span>
+          <span className="eyebrow">PENSADO PARA TU CATÁLOGO</span>
           <p>
-            Every detail makes
+            Cada detalle ayuda
             <br />
-            the right printer easier to find.
+            a encontrar la impresora ideal.
           </p>
         </div>
         <div className="account">
@@ -307,11 +309,11 @@ export default function Admin() {
           </span>
           <div>
             <strong>{user.name}</strong>
-            <span>{user.role.toLowerCase()}</span>
+            <span>{roleLabels[user.role]}</span>
           </div>
           <button
-            title="Sign out"
-            aria-label="Sign out"
+            title="Cerrar sesión"
+            aria-label="Cerrar sesión"
             onClick={logout}
             disabled={signingOut}
           >
@@ -322,24 +324,24 @@ export default function Admin() {
       <div className="workspace-body">
         <header className="topbar">
           <span>
-            Workspace <span className="divider">/</span>{" "}
+            Espacio de trabajo <span className="divider">/</span>{" "}
             <strong>{config.label}</strong>
           </span>
           <div className="topbar-actions">
-            <span className="workspace-chip">Printer catalog</span>
+            <span className="workspace-chip">Catálogo de impresoras</span>
             <button
               className="mobile-logout"
               onClick={logout}
               disabled={signingOut}
             >
-              Sign out
+              Cerrar sesión
             </button>
           </div>
         </header>
         <main id="main" className="main">
           <div className="page-heading">
             <div>
-              <p className="eyebrow">CATALOG MANAGEMENT</p>
+              <p className="eyebrow">GESTIÓN DEL CATÁLOGO</p>
               <h1>
                 {config.label}
                 <span className="count">
@@ -350,14 +352,14 @@ export default function Admin() {
             </div>
             {canEdit && (
               <button className="primary" onClick={() => setEditor({})}>
-                <span aria-hidden="true">＋</span> Add {config.singular}
+                <span aria-hidden="true">＋</span> Agregar {config.singular}
               </button>
             )}
           </div>
           {user.role === "VIEWER" && (
             <p className="notice">
-              Your account has read-only access. You can inspect records but
-              cannot change them.
+              Tu cuenta tiene acceso de solo lectura. Podés consultar los registros,
+              pero no modificarlos.
             </p>
           )}
           {toast && (
@@ -372,8 +374,8 @@ export default function Admin() {
                   <span aria-hidden="true">⌕</span>
                   <input
                     ref={searchRef}
-                    aria-label={"Search " + config.label.toLowerCase()}
-                    placeholder={"Search " + config.label.toLowerCase() + "…"}
+                    aria-label={"Buscar " + config.label.toLowerCase()}
+                    placeholder={"Buscar " + config.label.toLowerCase() + "…"}
                     value={query}
                     maxLength={120}
                     onChange={(e) => setQuery(e.target.value)}
@@ -385,14 +387,14 @@ export default function Admin() {
               <div className="toolbar-actions">
                 {resource !== "attributes" && (
                   <select
-                    aria-label="Filter by status"
+                    aria-label="Filtrar por estado"
                     value={status}
                     onChange={(e) => {
                       setStatus(e.target.value);
                       setPage(1);
                     }}
                   >
-                    <option value="">All statuses</option>
+                    <option value="">Todos los estados</option>
                     {Object.entries(statusLabels).map(([key, label]) => (
                       <option key={key} value={key}>
                         {label}
@@ -404,7 +406,7 @@ export default function Admin() {
                   onClick={() => setRefresh((x) => x + 1)}
                   disabled={loading}
                 >
-                  ↻ <span>Refresh</span>
+                  ↻ <span>Actualizar</span>
                 </button>
               </div>
             </div>
@@ -415,30 +417,30 @@ export default function Admin() {
                   <tr>
                     <th>
                       {resource === "downloads"
-                        ? "Document"
+                        ? "Documento"
                         : resource === "products"
-                          ? "Product / model"
-                          : "Name"}
+                          ? "Producto / modelo"
+                          : "Nombre"}
                     </th>
                     <th>
                       {resource === "products"
                         ? "SKU"
                         : resource === "attributes"
-                          ? "Type"
+                          ? "Tipo"
                           : resource === "downloads"
-                            ? "Type"
-                            : "Slug"}
+                            ? "Tipo"
+                            : "Identificador de URL"}
                     </th>
-                    <th>Status</th>
+                    <th>Estado</th>
                     <th>
                       {resource === "products"
-                        ? "Availability"
+                        ? "Disponibilidad"
                         : resource === "categories"
-                          ? "Catalog visibility"
-                          : "Order"}
+                          ? "Visibilidad en el catálogo"
+                          : "Orden"}
                     </th>
                     <th>
-                      <span className="sr-only">Actions</span>
+                      <span className="sr-only">Acciones</span>
                     </th>
                   </tr>
                 </thead>
@@ -459,9 +461,9 @@ export default function Admin() {
                               {resource === "products" && (
                                 <small>
                                   {row.lifecycle === "DISCONTINUED"
-                                    ? "Discontinued model"
+                                    ? "Modelo descontinuado"
                                     : row.shortDescription ||
-                                      "No short description yet"}
+                                      "Sin descripción breve"}
                                 </small>
                               )}
                             </span>
@@ -472,7 +474,7 @@ export default function Admin() {
                             ? row.sku || "—"
                             : resource === "attributes" ||
                                 resource === "downloads"
-                              ? row.type
+                              ? typeLabels[row.type ?? ""] ?? "—"
                               : row.slug}
                         </td>
                         <td>
@@ -481,14 +483,14 @@ export default function Admin() {
                         <td className="muted">
                           {resource === "products"
                             ? row.stockQuantity == null
-                              ? "Not specified"
+                              ? "Sin especificar"
                               : row.stockQuantity === 0
-                                ? "Out of stock"
-                                : `${row.stockQuantity} in stock`
+                                ? "Sin existencias"
+                                : `${row.stockQuantity} disponibles`
                             : resource === "categories"
                               ? row.isVisible
                                 ? "Visible"
-                                : "Not visible"
+                                : "No visible"
                               : (row.sortOrder ?? 0)}
                         </td>
                         <td>
@@ -496,7 +498,7 @@ export default function Admin() {
                             className="text-button"
                             onClick={() => setEditor({ id: row.id })}
                           >
-                            {canEdit ? "Edit" : "View"}{" "}
+                            {canEdit ? "Editar" : "Ver"}{" "}
                             <span aria-hidden="true">↗</span>
                           </button>
                         </td>
@@ -506,7 +508,7 @@ export default function Admin() {
               </table>
               {loading ? (
                 <div className="empty" role="status">
-                  Loading {config.label.toLowerCase()}…
+                  Cargando {config.label.toLowerCase()}…
                 </div>
               ) : !error && result?.data.length === 0 ? (
                 <div className="empty">
@@ -515,13 +517,13 @@ export default function Admin() {
                   </span>
                   <h2>
                     {search || status
-                      ? "No matching records"
-                      : `No ${config.label.toLowerCase()} yet`}
+                      ? "No hay registros que coincidan"
+                      : `Todavía no hay ${config.label.toLowerCase()}`}
                   </h2>
                   <p>
                     {search || status
-                      ? "Try another search or clear the filters."
-                      : `Add your first ${config.singular} to start building the catalog.`}
+                      ? "Probá otra búsqueda o borrá los filtros."
+                      : "Agregá un registro para empezar a completar el catálogo."}
                   </p>
                   {search || status ? (
                     <button
@@ -532,12 +534,12 @@ export default function Admin() {
                         setPage(1);
                       }}
                     >
-                      Clear filters
+                      Borrar filtros
                     </button>
                   ) : (
                     canEdit && (
                       <button className="primary" onClick={() => setEditor({})}>
-                        Add {config.singular}
+                        Agregar {config.singular}
                       </button>
                     )
                   )}
@@ -547,18 +549,18 @@ export default function Admin() {
             <footer className="pagination">
               <span>
                 {result && result.meta.total > 0
-                  ? `${(page - 1) * 20 + 1}–${Math.min(page * 20, result.meta.total)} of ${result.meta.total}`
-                  : "0 records"}
+                  ? `${(page - 1) * 20 + 1}–${Math.min(page * 20, result.meta.total)} de ${result.meta.total}`
+                  : "0 registros"}
               </span>
               <div>
                 <button
                   disabled={loading || page <= 1}
                   onClick={() => setPage((p) => p - 1)}
                 >
-                  ← Previous
+                  ← Anterior
                 </button>
                 <span>
-                  Page {page} of {Math.max(1, result?.meta.totalPages ?? 1)}
+                  Página {page} de {Math.max(1, result?.meta.totalPages ?? 1)}
                 </span>
                 <button
                   disabled={
@@ -566,14 +568,14 @@ export default function Admin() {
                   }
                   onClick={() => setPage((p) => p + 1)}
                 >
-                  Next →
+                  Siguiente →
                 </button>
               </div>
             </footer>
           </section>
           <p className="page-note">
-            Changes are saved to your Bareblekk catalog. Archived records can be
-            restored from their editor.
+            Los cambios se guardan en tu catálogo Bareblekk. Podés restaurar los registros
+            archivados desde su editor.
           </p>
         </main>
       </div>

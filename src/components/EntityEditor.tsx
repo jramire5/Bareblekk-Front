@@ -4,6 +4,7 @@ import {
   allowedStatuses,
   resources,
   statusLabels,
+  tabLabels,
   type CatalogRecord,
   type Lookups,
   type Resource,
@@ -11,6 +12,7 @@ import {
 } from "../lib/catalog";
 import RecordForm from "./RecordForm";
 import ProductDetails from "./ProductDetails";
+import { publicationIssues } from "../lib/publication";
 
 type Props = {
   resource: Resource;
@@ -39,8 +41,10 @@ export default function EntityEditor({
     [reload, setReload] = useState(0);
   const [message, setMessage] = useState("");
   const config = resources[resource];
+  const issues = row && resource === "products"
+    ? publicationIssues(row, lookups.categories ?? []) : [];
   function close() {
-    if (!busy && (!dirty || window.confirm("Discard your unsaved changes?")))
+    if (!busy && (!dirty || window.confirm("¿Descartar los cambios sin guardar?")))
       onClose();
   }
   useEffect(() => {
@@ -109,7 +113,7 @@ export default function EntityEditor({
     path: string,
     body: unknown,
     method = "PUT",
-    success = "Changes saved.",
+    success = "Cambios guardados.",
   ) {
     if (busy) return;
     setBusy(true);
@@ -129,13 +133,14 @@ export default function EntityEditor({
           setRevision((x) => x + 1);
         } catch {
           setError(
-            "Your change was saved, but the latest record could not be loaded. Reload before making another change.",
+            "El cambio se guardó, pero no se pudo cargar el registro actualizado. Recargalo antes de hacer otro cambio.",
           );
           setRow(null);
         }
       }
     } catch (e) {
-      setError((e as Error).message);
+      const publishing = path.endsWith("/status") && (body as { status?: string })?.status === "PUBLISHED";
+      setError(`${publishing ? "No se pudo publicar el registro." : method === "DELETE" ? "No se pudo eliminar el elemento." : "No se pudo guardar el cambio."} ${(e as Error).message}`);
     } finally {
       setBusy(false);
     }
@@ -154,11 +159,11 @@ export default function EntityEditor({
       setRow(result.data);
       setMessage(
         resource === "attributes"
-          ? "Attribute created. You can now use it in product specifications."
-          : "Created as a draft. Add the remaining details before publishing.",
+          ? "Atributo creado. Ya podés usarlo en las especificaciones de productos."
+          : "Registro creado como borrador. Completá los detalles antes de publicar.",
       );
       onSaved(
-        `${config.singular[0].toUpperCase() + config.singular.slice(1)} created.`,
+        "Registro creado.",
       );
     } catch (e) {
       setError((e as Error).message);
@@ -169,7 +174,7 @@ export default function EntityEditor({
   function switchTab(value: string) {
     if (
       busy ||
-      (dirty && !window.confirm("Discard unsaved changes in this section?"))
+      (dirty && !window.confirm("¿Descartar los cambios sin guardar de esta sección?"))
     )
       return;
     setDirty(false);
@@ -183,14 +188,14 @@ export default function EntityEditor({
     if (
       dirty &&
       !window.confirm(
-        "Discard unsaved changes and change this record’s status?",
+        "¿Descartar los cambios sin guardar y cambiar el estado del registro?",
       )
     )
       return;
     if (
       status === "ARCHIVED" &&
       !window.confirm(
-        `Archive “${row.name || row.title}”? It will be removed from the public catalog. You can restore it later.`,
+        `¿Archivar “${row.name || row.title}”? Se quitará del catálogo público. Podés restaurarlo más adelante.`,
       )
     )
       return;
@@ -198,7 +203,7 @@ export default function EntityEditor({
       recordPath(resource, row.id) + "/status",
       { status },
       "PUT",
-      `${config.singular[0].toUpperCase() + config.singular.slice(1)} ${statusLabels[status].toLowerCase()}.`,
+      `Estado actualizado: ${statusLabels[status].toLowerCase()}.`,
     );
   }
   return (
@@ -216,17 +221,17 @@ export default function EntityEditor({
           <p className="eyebrow">{config.label}</p>
           <h2 id="editor-title">
             {recordId
-              ? row?.name || row?.title || "Record details"
-              : "Add " + config.singular}
+              ? row?.name || row?.title || "Detalles del registro"
+              : "Agregar " + config.singular}
           </h2>
         </div>
-        <button aria-label="Close editor" onClick={close} disabled={busy}>
+        <button aria-label="Cerrar editor" onClick={close} disabled={busy}>
           ✕
         </button>
       </header>
       <div className="editor-body">
         {loading ? (
-          <p role="status">Loading details…</p>
+          <p role="status">Cargando detalles…</p>
         ) : (
           <>
             {error && (
@@ -239,7 +244,7 @@ export default function EntityEditor({
                     if (
                       !dirty ||
                       window.confirm(
-                        "Discard your changes and reload the latest record?",
+                        "¿Descartar tus cambios y cargar la última versión del registro?",
                       )
                     ) {
                       setDirty(false);
@@ -247,7 +252,7 @@ export default function EntityEditor({
                     }
                   }}
                 >
-                  Reload record
+                  Recargar registro
                 </button>
               </div>
             )}
@@ -263,14 +268,14 @@ export default function EntityEditor({
                     <div>
                       <span className="eyebrow">
                         {resource === "attributes"
-                          ? "AVAILABILITY"
-                          : "PUBLICATION"}
+                          ? "DISPONIBILIDAD"
+                          : "PUBLICACIÓN"}
                       </span>
                       <strong>
                         {resource === "attributes"
                           ? row.active
-                            ? "Active"
-                            : "Inactive"
+                            ? "Activo"
+                            : "Inactivo"
                           : statusLabels[row.status]}
                       </strong>
                     </div>
@@ -285,12 +290,12 @@ export default function EntityEditor({
                                 { active: !row.active },
                                 "PUT",
                                 row.active
-                                  ? "Attribute deactivated."
-                                  : "Attribute activated.",
+                                  ? "Atributo desactivado."
+                                  : "Atributo activado.",
                               )
                             }
                           >
-                            {row.active ? "Deactivate" : "Activate"}
+                            {row.active ? "Desactivar" : "Activar"}
                           </button>
                         ) : (
                           allowedStatuses(row.status).map((value) => (
@@ -303,12 +308,12 @@ export default function EntityEditor({
                               onClick={() => changeStatus(value)}
                             >
                               {value === "PUBLISHED"
-                                ? "Publish"
+                                ? "Publicar"
                                 : value === "ARCHIVED"
-                                  ? "Archive"
+                                  ? "Archivar"
                                   : row.status === "ARCHIVED"
-                                    ? "Restore draft"
-                                    : "Unpublish"}
+                                    ? "Restaurar borrador"
+                                    : "Retirar publicación"}
                             </button>
                           ))
                         )}
@@ -318,11 +323,21 @@ export default function EntityEditor({
                 )}
                 {row && resource === "products" && (
                   <>
-                    <div className="hint">
-                      To publish: add a short description, assign a visible
-                      category, and upload a main image with alternative text.
-                    </div>
-                    <nav className="editor-tabs" aria-label="Product sections">
+                    <section className="hint" aria-label="Requisitos de publicación">
+                      <strong>{issues.length ? "Pendientes para publicar este producto" : "Requisitos de publicación completos"}</strong>
+                      <p>Esta revisión usa los datos guardados. El servidor vuelve a validarlos al publicar.</p>
+                      {dirty && <p>Tenés cambios sin guardar. Guardalos para actualizar esta revisión.</p>}
+                      {row.status === "ARCHIVED" && <p>El producto está archivado. Primero usá «Restaurar borrador» para poder publicarlo.</p>}
+                      {issues.length > 0 && <ul>{issues.map((issue, index) => (
+                        <li key={index}>
+                          <p>{issue.message}</p>
+                          <button type="button" disabled={busy} onClick={() => switchTab(issue.tab)}>
+                            Ir a {tabLabels[issue.tab]}
+                          </button>
+                        </li>
+                      ))}</ul>}
+                    </section>
+                    <nav className="editor-tabs" aria-label="Secciones del producto">
                       {[
                         "information",
                         "categories",
@@ -339,7 +354,7 @@ export default function EntityEditor({
                           onClick={() => switchTab(value)}
                           disabled={busy}
                         >
-                          {value[0].toUpperCase() + value.slice(1)}
+                          {tabLabels[value]}
                         </button>
                       ))}
                     </nav>
@@ -352,7 +367,7 @@ export default function EntityEditor({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    Download current PDF ↗
+                    Descargar PDF actual ↗
                   </a>
                 )}
                 <div onChange={() => setDirty(true)} key={revision}>
@@ -383,13 +398,13 @@ export default function EntityEditor({
       <footer className="editor-footer">
         <span>
           {dirty
-            ? "● Unsaved changes"
+            ? "● Cambios sin guardar"
             : canEdit
-              ? "Changes are saved to the catalog"
-              : "Read-only access"}
+              ? "Los cambios se guardan en el catálogo"
+              : "Acceso de solo lectura"}
         </span>
         <button onClick={close} disabled={busy}>
-          Close
+          Cerrar
         </button>
       </footer>
     </dialog>

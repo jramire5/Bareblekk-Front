@@ -2,6 +2,8 @@ import { useState, type SyntheticEvent } from "react";
 import { apiBase, recordPath } from "../lib/api";
 import {
   specPayload,
+  tabLabels,
+  statusLabels,
   type CatalogRecord,
   type Lookups,
   type Spec,
@@ -48,7 +50,7 @@ export default function ProductDetails({
   const saveButton = (
     <div className="form-actions">
       <button type="submit" className="primary">
-        Save {tab}
+        Guardar {tabLabels[tab].toLowerCase()}
       </button>
     </div>
   );
@@ -75,8 +77,8 @@ export default function ProductDetails({
       >
         <fieldset disabled={disabled}>
           <div className="section-title">
-            <h3>Assign {tab}</h3>
-            <p>Choose the {tab} associated with this printer.</p>
+            <h3>Asignar {tabLabels[tab].toLowerCase()}</h3>
+            <p>Elegí las {tabLabels[tab].toLowerCase()} asociadas a esta impresora.</p>
           </div>
           {choices.length ? (
             <div className="choice-list">
@@ -92,12 +94,12 @@ export default function ProductDetails({
                     {item.name}
                     <small>
                       {item.status === "ARCHIVED"
-                        ? "Archived — existing association"
+                        ? "Archivado — asociación existente"
                         : tab === "categories"
                           ? item.isVisible
-                            ? "Visible category"
-                            : "Not visible in catalog"
-                          : item.status.toLowerCase()}
+                            ? "Categoría visible"
+                            : "No visible en el catálogo"
+                          : statusLabels[item.status]}
                     </small>
                   </span>
                 </label>
@@ -105,7 +107,7 @@ export default function ProductDetails({
             </div>
           ) : (
             <p className="hint">
-              No {tab} available. Create them from the navigation menu first.
+              No hay {tabLabels[tab].toLowerCase()} disponibles. Crealas primero desde el menú de navegación.
             </p>
           )}
           {saveButton}
@@ -131,11 +133,11 @@ export default function ProductDetails({
       >
         <fieldset disabled={disabled}>
           <div className="section-title">
-            <h3>Stock availability</h3>
-            <p>Set the available quantity for this model.</p>
+            <h3>Disponibilidad de existencias</h3>
+            <p>Indicá la cantidad disponible de este modelo.</p>
           </div>
           <label>
-            Quantity
+            Cantidad
             <input
               name="quantity"
               type="number"
@@ -145,7 +147,7 @@ export default function ProductDetails({
               defaultValue={row.stockQuantity ?? ""}
             />
             <small>
-              Leave blank for unknown stock. Zero means out of stock.
+              Dejá el campo vacío si desconocés la cantidad. Cero indica que no hay existencias.
             </small>
           </label>
           {saveButton}
@@ -168,8 +170,8 @@ export default function ProductDetails({
       >
         <fieldset disabled={disabled}>
           <div className="section-title">
-            <h3>Technical specifications</h3>
-            <p>Build a consistent, comparable technical sheet.</p>
+            <h3>Especificaciones técnicas</h3>
+            <p>Armá una ficha técnica clara y fácil de comparar.</p>
           </div>
           {error && (
             <p className="notice error" role="alert">
@@ -184,7 +186,7 @@ export default function ProductDetails({
               <div className="spec-card" key={index}>
                 <div className="form-grid">
                   <label>
-                    Attribute *
+                    Atributo *
                     <select
                       required
                       value={spec.attributeId}
@@ -197,7 +199,7 @@ export default function ProductDetails({
                         })
                       }
                     >
-                      <option value="">Choose an attribute</option>
+                      <option value="">Elegí un atributo</option>
                       {lookups.attributes
                         ?.filter(
                           (a) =>
@@ -215,7 +217,7 @@ export default function ProductDetails({
                     </select>
                   </label>
                   <label>
-                    Value *
+                    Valor *
                     {attribute?.type === "BOOLEAN" ? (
                       <select
                         value={String(spec.booleanValue ?? false)}
@@ -225,7 +227,7 @@ export default function ProductDetails({
                           })
                         }
                       >
-                        <option value="true">Yes</option>
+                        <option value="true">Sí</option>
                         <option value="false">No</option>
                       </select>
                     ) : attribute?.type === "ENUM" ? (
@@ -236,7 +238,7 @@ export default function ProductDetails({
                           patchSpec(index, { textValue: e.target.value })
                         }
                       >
-                        <option value="">Choose a value</option>
+                        <option value="">Elegí un valor</option>
                         {attribute.allowedValues?.map((value) => (
                           <option key={value}>{value}</option>
                         ))}
@@ -267,18 +269,18 @@ export default function ProductDetails({
                 </div>
                 <div className="form-grid">
                   <label>
-                    Group
+                    Grupo
                     <input
                       maxLength={100}
                       value={spec.groupName ?? ""}
                       onChange={(e) =>
                         patchSpec(index, { groupName: e.target.value })
                       }
-                      placeholder="e.g. Print performance"
+                      placeholder="Ej.: Rendimiento de impresión"
                     />
                   </label>
                   <label>
-                    Order
+                    Orden
                     <input
                       type="number"
                       required
@@ -299,15 +301,15 @@ export default function ProductDetails({
                     markDirty();
                   }}
                 >
-                  Remove specification
+                  Quitar especificación
                 </button>
               </div>
             );
           })}
           {!specs.length && (
             <p className="hint">
-              No specifications added yet. Define technical attributes first,
-              then assign their values here.
+              Todavía no hay especificaciones. Primero definí los atributos técnicos
+              y después asigná sus valores aquí.
             </p>
           )}
           <button
@@ -332,7 +334,7 @@ export default function ProductDetails({
               markDirty();
             }}
           >
-            ＋ Add specification
+            ＋ Agregar especificación
           </button>
           {saveButton}
         </fieldset>
@@ -342,10 +344,10 @@ export default function ProductDetails({
     return (
       <div>
         <div className="section-title">
-          <h3>Product images</h3>
+          <h3>Imágenes del producto</h3>
           <p>
-            Choose a clear main image for the catalog and additional gallery
-            views.
+            Elegí una imagen principal clara para el catálogo y vistas adicionales
+            para la galería.
           </p>
         </div>
         {row.images?.map((item) => (
@@ -376,7 +378,7 @@ export default function ProductDetails({
             />
             <fieldset disabled={disabled}>
               <label>
-                Alternative text *
+                Texto alternativo *
                 <input
                   name="altText"
                   required
@@ -386,14 +388,14 @@ export default function ProductDetails({
               </label>
               <div className="form-grid">
                 <label>
-                  Role
+                  Función
                   <select name="role" defaultValue={item.role}>
-                    <option value="MAIN">Main image</option>
-                    <option value="GALLERY">Gallery</option>
+                    <option value="MAIN">Imagen principal</option>
+                    <option value="GALLERY">Galería</option>
                   </select>
                 </label>
                 <label>
-                  Order
+                  Orden
                   <input
                     name="sortOrder"
                     type="number"
@@ -405,21 +407,21 @@ export default function ProductDetails({
                 </label>
               </div>
               <div className="inline-actions">
-                <button type="submit">Save image details</button>
+                <button type="submit">Guardar detalles de imagen</button>
                 <button
                   type="button"
                   className="danger-text"
                   onClick={() => {
-                    if (window.confirm("Permanently remove this image?"))
+                    if (window.confirm("¿Eliminar esta imagen de forma permanente?"))
                       void mutate(
                         `${path}/images/${item.id}`,
                         undefined,
                         "DELETE",
-                        "Image removed.",
+                        "Imagen eliminada.",
                       );
                   }}
                 >
-                  Remove image
+                  Eliminar imagen
                 </button>
               </div>
             </fieldset>
@@ -435,47 +437,47 @@ export default function ProductDetails({
                 file.size > 10 * 1024 * 1024 ||
                 !["image/jpeg", "image/png", "image/webp"].includes(file.type)
               ) {
-                setError("Choose a JPEG, PNG, or WebP image up to 10 MB.");
+                setError("Elegí una imagen JPEG, PNG o WebP de hasta 10 MB.");
                 return;
               }
-              void mutate(path + "/images", data, "POST", "Image uploaded.");
+              void mutate(path + "/images", data, "POST", "Imagen subida.");
             })
           }
         >
           <fieldset disabled={disabled}>
-            <h3>Upload an image</h3>
+            <h3>Subir una imagen</h3>
             {error && (
               <p className="notice error" role="alert">
                 {error}
               </p>
             )}
             <label>
-              Image file *
+              Archivo de imagen *
               <input
                 type="file"
                 name="file"
                 required
                 accept="image/jpeg,image/png,image/webp"
               />
-              <small>JPEG, PNG, or WebP · up to 10 MB</small>
+              <small>JPEG, PNG o WebP · hasta 10 MB</small>
             </label>
             <label>
-              Alternative text *
+              Texto alternativo *
               <input
                 name="altText"
                 maxLength={300}
                 required
-                placeholder="Describe the printer and view shown"
+                placeholder="Describí la impresora y la vista que se muestra"
               />
             </label>
             <label>
-              Role
+              Función
               <select
                 name="role"
                 defaultValue={row.images?.length ? "GALLERY" : "MAIN"}
               >
-                <option value="MAIN">Main image</option>
-                <option value="GALLERY">Gallery</option>
+                <option value="MAIN">Imagen principal</option>
+                <option value="GALLERY">Galería</option>
               </select>
             </label>
             <input
@@ -484,7 +486,7 @@ export default function ProductDetails({
               value={row.images?.length ?? 0}
             />
             <button className="primary" type="submit">
-              Upload image
+              Subir imagen
             </button>
           </fieldset>
         </form>
@@ -496,7 +498,7 @@ export default function ProductDetails({
     ) => (
       <>
         <label>
-          Title *
+          Título *
           <input
             name="title"
             required
@@ -505,7 +507,7 @@ export default function ProductDetails({
           />
         </label>
         <label>
-          Video URL *
+          URL del video *
           <input
             name="url"
             type="url"
@@ -517,14 +519,14 @@ export default function ProductDetails({
         </label>
         <div className="form-grid">
           <label>
-            Provider
+            Proveedor
             <select name="provider" defaultValue={item?.provider ?? "YOUTUBE"}>
               <option value="YOUTUBE">YouTube</option>
               <option value="VIMEO">Vimeo</option>
             </select>
           </label>
           <label>
-            Order
+            Orden
             <input
               name="sortOrder"
               type="number"
@@ -553,21 +555,21 @@ export default function ProductDetails({
         !["https:", "http:"].includes(url.protocol) ||
         !hosts.includes(url.hostname)
       ) {
-        setError("Use a YouTube or Vimeo URL matching the selected provider.");
+        setError("Usá una URL de YouTube o Vimeo que coincida con el proveedor seleccionado.");
         return;
       }
       void mutate(
         path + "/videos" + (id ? "/" + id : ""),
         body,
         id ? "PATCH" : "POST",
-        "Video saved.",
+        "Video guardado.",
       );
     };
     return (
       <div>
         <div className="section-title">
-          <h3>Product videos</h3>
-          <p>Link demonstrations from YouTube or Vimeo.</p>
+          <h3>Videos del producto</h3>
+          <p>Vinculá demostraciones de YouTube o Vimeo.</p>
         </div>
         {error && (
           <p className="notice error" role="alert">
@@ -583,21 +585,21 @@ export default function ProductDetails({
             <fieldset disabled={disabled}>
               {videoFields(item)}
               <div className="inline-actions">
-                <button type="submit">Save video</button>
+                <button type="submit">Guardar video</button>
                 <button
                   type="button"
                   className="danger-text"
                   onClick={() => {
-                    if (window.confirm(`Remove “${item.title}”?`))
+                    if (window.confirm(`¿Eliminar “${item.title}”?`))
                       void mutate(
                         path + "/videos/" + item.id,
                         undefined,
                         "DELETE",
-                        "Video removed.",
+                        "Video eliminado.",
                       );
                   }}
                 >
-                  Remove video
+                  Eliminar video
                 </button>
               </div>
             </fieldset>
@@ -608,10 +610,10 @@ export default function ProductDetails({
           onSubmit={(e) => submit(e, (data) => saveVideo(data))}
         >
           <fieldset disabled={disabled}>
-            <h3>Add video</h3>
+            <h3>Agregar video</h3>
             {videoFields()}
             <button type="submit" className="primary">
-              Add video
+              Agregar video
             </button>
           </fieldset>
         </form>

@@ -15,7 +15,7 @@ for (const signedIn of [false, true]) {
             status: signedIn ? 200 : 401,
             json: signedIn
               ? { data: { id: "test-admin", name: "Test administrator", role: "ADMIN", email: "test@example.test" } }
-              : { error: { code: "UNAUTHENTICATED", message: "Sign in." } },
+              : { error: { code: "UNAUTHENTICATED", message: "Iniciar sesión." } },
           });
         }
         return route.fulfill({ json: { data: [], meta: { page: 1, pageSize: 20, total: 0, totalPages: 0 } } });
@@ -25,15 +25,16 @@ for (const signedIn of [false, true]) {
     });
 
     await page.goto("/admin/");
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
     if (signedIn) {
-      await expect(page.getByRole("heading", { name: /^Products/ })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "No products yet" })).toBeVisible();
-      await page.getByRole("link", { name: "Categories", exact: true }).click();
-      await expect(page.getByRole("heading", { name: /^Categories/ })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /^Productos/ })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Todavía no hay productos" })).toBeVisible();
+      await page.getByRole("link", { name: "Categorías", exact: true }).click();
+      await expect(page.getByRole("heading", { name: /^Categorías/ })).toBeVisible();
     } else {
-      await expect(page.getByRole("heading", { name: "Sign in to your workspace" })).toBeVisible();
-      await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
-      await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Ingresá a tu espacio de trabajo" })).toBeVisible();
+      await expect(page.getByLabel("Correo electrónico", { exact: true })).toBeVisible();
+      await expect(page.getByLabel("Contraseña", { exact: true })).toBeVisible();
     }
     await expect(page.locator("astro-island")).not.toHaveAttribute("ssr", "");
     expect(apiPaths).toContain("/api/v1/auth/me");

@@ -46,7 +46,7 @@ export default function RecordForm({
       .map((x) => (
         <option key={x.id} value={x.id}>
           {x.name}
-          {x.status === "ARCHIVED" ? " (archived)" : ""}
+          {x.status === "ARCHIVED" ? " (archivado)" : ""}
         </option>
       ));
   async function submit(event: SyntheticEvent<HTMLFormElement>) {
@@ -73,14 +73,14 @@ export default function RecordForm({
         sortOrder: Number(text("sortOrder")),
       };
       if (type === "ENUM" && !(body.allowedValues as string[]).length) {
-        setError("Add at least one allowed value.");
+        setError("Agregá al menos un valor permitido.");
         return;
       }
       if (
         new Set(body.allowedValues as string[]).size !==
         (body.allowedValues as string[]).length
       ) {
-        setError("Allowed values must be unique.");
+        setError("Los valores permitidos no pueden repetirse.");
         return;
       }
     } else if (document) {
@@ -99,7 +99,7 @@ export default function RecordForm({
           file.size > 25 * 1024 * 1024 ||
           file.type !== "application/pdf"
         ) {
-          setError("Choose a PDF file up to 25 MB.");
+          setError("Elegí un archivo PDF de hasta 25 MB.");
           return;
         }
         const form = new FormData();
@@ -133,14 +133,14 @@ export default function RecordForm({
         <div className="section-title">
           <h3>
             {product
-              ? "Product information"
+              ? "Información del producto"
               : attribute
-                ? "Attribute definition"
+                ? "Definición del atributo"
                 : document
-                  ? "Document information"
-                  : "Basic information"}
+                  ? "Información del documento"
+                  : "Información básica"}
           </h3>
-          <p>Fields marked with * are required.</p>
+          <p>Los campos marcados con * son obligatorios.</p>
         </div>
         {error && (
           <div className="notice error" role="alert">
@@ -148,7 +148,7 @@ export default function RecordForm({
           </div>
         )}
         <label>
-          {document ? "Title" : "Name"} *
+          {document ? "Título" : "Nombre"} *
           <input
             name="name"
             value={name}
@@ -158,12 +158,12 @@ export default function RecordForm({
               setName(e.target.value);
               if (!slugEdited) setSlug(slugify(e.target.value));
             }}
-            placeholder={product ? "e.g. Mimaki UJF-6042 MkII e" : undefined}
+            placeholder={product ? "Ej.: Mimaki UJF-6042 MkII e" : undefined}
           />
         </label>
         {!attribute && !document && (
           <label>
-            Slug *
+            Identificador de URL *
             <input
               name="slug"
               required
@@ -178,14 +178,14 @@ export default function RecordForm({
             />
             <small>
               {row?.publishedAt
-                ? "The URL slug is locked after the first publication."
-                : "Lowercase letters, numbers, and hyphens. Used in catalog URLs."}
+                ? "El identificador de URL queda fijo después de la primera publicación."
+                : "Letras minúsculas, números y guiones. Se usa en las URL del catálogo."}
             </small>
           </label>
         )}
         {(product || resource === "product-lines") && (
           <label>
-            Brand *
+            Marca *
             <select
               name="brandId"
               required
@@ -195,12 +195,12 @@ export default function RecordForm({
                 setLine("");
               }}
             >
-              <option value="">Choose a brand</option>
+              <option value="">Elegí una marca</option>
               {options("brands", row?.brandId)}
             </select>
             {!lookups.brands?.length && (
               <small>
-                Create a brand before adding products or product lines.
+                Creá una marca antes de agregar productos o líneas de productos.
               </small>
             )}
           </label>
@@ -209,13 +209,13 @@ export default function RecordForm({
           <>
             <div className="form-grid">
               <label>
-                Product line
+                Línea de productos
                 <select
                   name="productLineId"
                   value={line}
                   onChange={(e) => setLine(e.target.value)}
                 >
-                  <option value="">No product line</option>
+                  <option value="">Sin línea de productos</option>
                   {options(
                     "product-lines",
                     row?.productLineId,
@@ -235,7 +235,7 @@ export default function RecordForm({
               </label>
             </div>
             <label>
-              Short description
+              Descripción breve
               <textarea
                 name="shortDescription"
                 defaultValue={row?.shortDescription ?? ""}
@@ -244,17 +244,17 @@ export default function RecordForm({
                 required={row?.status === "PUBLISHED"}
               />
               <small>
-                A brief overview. Required before publishing (up to 500
-                characters).
+                Un resumen breve. Obligatorio para publicar (hasta 500
+                caracteres).
               </small>
             </label>
           </>
         )}
         {resource === "categories" && (
           <label>
-            Parent category
+            Categoría superior
             <select name="parentId" defaultValue={row?.parentId ?? ""}>
-              <option value="">Top-level category</option>
+              <option value="">Categoría principal</option>
               {options(
                 "categories",
                 row?.parentId,
@@ -262,14 +262,14 @@ export default function RecordForm({
               )}
             </select>
             <small>
-              A category is visible only when it and all its parents are
-              published.
+              Una categoría es visible solo cuando ella y todas sus categorías superiores
+              están publicadas.
             </small>
           </label>
         )}
         {!attribute && resource !== "tags" && (
           <label>
-            Description
+            Descripción
             <textarea
               name="description"
               defaultValue={row?.description ?? ""}
@@ -282,13 +282,13 @@ export default function RecordForm({
           <>
             <div className="form-grid">
               <label>
-                Lifecycle
+                Ciclo de vida
                 <select
                   name="lifecycle"
                   defaultValue={row?.lifecycle ?? "ACTIVE"}
                 >
-                  <option value="ACTIVE">Active model</option>
-                  <option value="DISCONTINUED">Discontinued model</option>
+                  <option value="ACTIVE">Modelo activo</option>
+                  <option value="DISCONTINUED">Modelo descontinuado</option>
                 </select>
               </label>
               <label className="checkbox">
@@ -297,13 +297,13 @@ export default function RecordForm({
                   type="checkbox"
                   defaultChecked={row?.isFeatured}
                 />
-                Featured product
+                Producto destacado
               </label>
             </div>
             <details>
-              <summary>Search engine information</summary>
+              <summary>Información para buscadores</summary>
               <label>
-                SEO title
+                Título SEO
                 <input
                   name="seoTitle"
                   defaultValue={row?.seoTitle ?? ""}
@@ -311,7 +311,7 @@ export default function RecordForm({
                 />
               </label>
               <label>
-                SEO description
+                Descripción SEO
                 <textarea
                   name="seoDescription"
                   defaultValue={row?.seoDescription ?? ""}
@@ -324,7 +324,7 @@ export default function RecordForm({
         {attribute && (
           <>
             <label>
-              Code *
+              Código *
               <input
                 name="code"
                 defaultValue={row?.code ?? ""}
@@ -333,33 +333,33 @@ export default function RecordForm({
                 pattern="[a-z][a-z0-9_]*"
               />
               <small>
-                Lowercase letters, numbers, and underscores; start with a
-                letter.
+                Letras minúsculas, números y guiones bajos; debe empezar con una
+                letra.
               </small>
             </label>
             <label>
-              Value type
+              Tipo de valor
               <select value={type} onChange={(e) => setType(e.target.value)}>
-                <option value="TEXT">Text</option>
-                <option value="NUMBER">Number</option>
-                <option value="BOOLEAN">Yes / no</option>
-                <option value="ENUM">Choice from a list</option>
+                <option value="TEXT">Texto</option>
+                <option value="NUMBER">Número</option>
+                <option value="BOOLEAN">Sí / no</option>
+                <option value="ENUM">Opción de una lista</option>
               </select>
             </label>
             {type === "NUMBER" && (
               <label>
-                Unit
+                Unidad
                 <input
                   name="unit"
                   defaultValue={row?.unit ?? ""}
                   maxLength={30}
-                  placeholder="e.g. mm, dpi, m²/h"
+                  placeholder="Ej.: mm, dpi, m²/h"
                 />
               </label>
             )}
             {type === "ENUM" && (
               <label>
-                Allowed values *
+                Valores permitidos *
                 <textarea
                   name="allowedValues"
                   required
@@ -367,7 +367,7 @@ export default function RecordForm({
                   rows={5}
                 />
                 <small>
-                  One value per line; up to 100 values of 100 characters each.
+                  Un valor por línea; hasta 100 valores de 100 caracteres cada uno.
                 </small>
               </label>
             )}
@@ -378,13 +378,13 @@ export default function RecordForm({
                   name="filterable"
                   defaultChecked={row?.filterable}
                 />
-                Use as a catalog filter
+                Usar como filtro del catálogo
               </label>
             )}
             {row && (
               <p className="hint">
-                Attributes already used by products have restrictions on changes
-                to their code, type, unit, and existing options.
+                Los atributos utilizados por productos tienen restricciones para cambiar
+                su código, tipo, unidad y opciones existentes.
               </p>
             )}
           </>
@@ -392,70 +392,70 @@ export default function RecordForm({
         {document && (
           <>
             <label>
-              Document type
+              Tipo de documento
               <select value={type} onChange={(e) => setType(e.target.value)}>
-                <option value="BROCHURE">Brochure</option>
-                <option value="DATASHEET">Datasheet</option>
+                <option value="BROCHURE">Folleto</option>
+                <option value="DATASHEET">Ficha técnica</option>
                 <option value="MANUAL">Manual</option>
-                <option value="OTHER">Other</option>
+                <option value="OTHER">Otro</option>
               </select>
             </label>
             <label>
-              Belongs to
+              Pertenece a
               <select value={owner} onChange={(e) => setOwner(e.target.value)}>
-                <option value="general">General catalog</option>
-                <option value="product">A product</option>
-                <option value="line">A product line</option>
+                <option value="general">Catálogo general</option>
+                <option value="product">Un producto</option>
+                <option value="line">Una línea de productos</option>
               </select>
             </label>
             {owner === "product" && (
               <label>
-                Product *
+                Producto *
                 <select
                   name="productId"
                   required
                   defaultValue={row?.productId ?? ""}
                 >
-                  <option value="">Choose a product</option>
+                  <option value="">Elegí un producto</option>
                   {options("products", row?.productId)}
                 </select>
               </label>
             )}
             {owner === "line" && (
               <label>
-                Product line *
+                Línea de productos *
                 <select
                   name="productLineId"
                   required
                   defaultValue={row?.productLineId ?? ""}
                 >
-                  <option value="">Choose a line</option>
+                  <option value="">Elegí una línea</option>
                   {options("product-lines", row?.productLineId)}
                 </select>
               </label>
             )}
             {!row && (
               <label>
-                PDF file *
+                Archivo PDF *
                 <input
                   type="file"
                   name="file"
                   accept="application/pdf"
                   required
                 />
-                <small>Maximum 25 MB.</small>
+                <small>Máximo 25 MB.</small>
               </label>
             )}
             {row && (
               <p className="hint">
-                Changing the owner of a published document returns it to draft.
+                Cambiar la asociación de un documento publicado lo devuelve a borrador.
               </p>
             )}
           </>
         )}
         {!product && (
           <label>
-            Display order
+            Orden de visualización
             <input
               type="number"
               name="sortOrder"
@@ -469,15 +469,15 @@ export default function RecordForm({
         <div className="form-actions">
           <button type="submit" className="primary">
             {row
-              ? "Save changes"
-              : "Create " +
+              ? "Guardar cambios"
+              : "Crear " +
                 (product
-                  ? "product"
+                  ? "producto"
                   : attribute
-                    ? "attribute"
+                    ? "atributo"
                     : document
-                      ? "document"
-                      : "record")}
+                      ? "documento"
+                      : "registro")}
           </button>
         </div>
       </fieldset>

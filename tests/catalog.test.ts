@@ -69,14 +69,14 @@ describe("catalog rules", () => {
   });
   it("rejects missing and out-of-range numeric values and invalid enum choices", () => {
     expect(() => specPayload([spec], [attr("NUMBER")])).toThrow(
-      "Enter a number",
+      "Ingresá un número",
     );
     expect(() =>
       specPayload([{ ...spec, numberValue: "2.00001" }], [attr("NUMBER")]),
-    ).toThrow("four decimal");
+    ).toThrow("cuatro decimales");
     expect(() =>
       specPayload([{ ...spec, textValue: "Unknown" }], [attr("ENUM")]),
-    ).toThrow("valid option");
+    ).toThrow("opción válida");
     expect(
       specPayload([{ ...spec, textValue: "Wide" }], [attr("ENUM")])[0].value,
     ).toBe("Wide");

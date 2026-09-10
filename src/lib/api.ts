@@ -1,4 +1,5 @@
 import type { CatalogRecord, Page, Resource } from "./catalog";
+import { errorMessage, validationDetail } from "./validation";
 
 export class ApiError extends Error {
   constructor(
@@ -46,7 +47,7 @@ export async function request<T>(
     throw new ApiError(
       0,
       "CONNECTION_ERROR",
-      "Cannot reach Bareblekk. Check that the backend is running, then try again. If you were saving, reload the record before retrying to check whether the change was applied.",
+      "No se pudo conectar con Bareblekk. Verificá que el servidor esté funcionando e intentá de nuevo. Si estabas guardando, recargá el registro para comprobar si el cambio se aplicó antes de reintentar.",
     );
   }
   if (response.status === 204) return undefined as T;
@@ -61,21 +62,16 @@ export async function request<T>(
     const details = json?.error?.details;
     const message =
       response.status === 412
-        ? "Someone else updated this record. Your changes have not been saved. Reload the latest version before editing again."
-        : (json?.error?.message ??
-          "The request could not be completed. Check the backend connection and try again.");
+        ? "Otra persona actualizó este registro. Tus cambios no se guardaron. Recargá la última versión antes de volver a editar."
+        : errorMessage(json?.error?.code ?? "REQUEST_FAILED", json?.error?.message ??
+          "No se pudo completar la solicitud. Verificá la conexión con el servidor e intentá de nuevo.");
     throw new ApiError(
       response.status,
       json?.error?.code ?? "REQUEST_FAILED",
       message +
         (Array.isArray(details)
           ? " " +
-            details
-              .map(
-                (d: { field: string; message: string }) =>
-                  `${d.field}: ${d.message}`,
-              )
-              .join(" · ")
+            details.map(validationDetail).join(" · ")
           : ""),
     );
   }
@@ -83,7 +79,7 @@ export async function request<T>(
     throw new ApiError(
       0,
       "INVALID_RESPONSE",
-      "The API returned an unexpected response. Check the API address.",
+      "El servidor devolvió una respuesta inesperada. Verificá la dirección de la API.",
     );
   return json as T;
 }

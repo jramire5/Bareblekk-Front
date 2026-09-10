@@ -74,7 +74,7 @@ describe("Bareblekk API client", () => {
         ),
     );
     await expect(request("/admin/categories")).rejects.toThrow(
-      "slug: Invalid slug",
+      "Identificador de URL: Usá solo letras minúsculas, números y guiones entre palabras, sin espacios ni acentos.",
     );
   });
   it("handles unavailable backends and invalid responses", async () => {

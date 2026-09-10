@@ -1,50 +1,50 @@
 export const resources = {
   products: {
-    label: "Products",
-    singular: "product",
-    description: "Manage the printers in your catalog.",
+    label: "Productos",
+    singular: "producto",
+    description: "Administrá las impresoras de tu catálogo.",
     icon: "▤",
   },
   categories: {
-    label: "Categories",
-    singular: "category",
-    description: "Organize printers into a clear category hierarchy.",
+    label: "Categorías",
+    singular: "categoría",
+    description: "Organizá las impresoras en una jerarquía clara de categorías.",
     icon: "◫",
   },
   brands: {
-    label: "Brands",
-    singular: "brand",
-    description: "Manage the manufacturers behind your products.",
+    label: "Marcas",
+    singular: "marca",
+    description: "Administrá los fabricantes de tus productos.",
     icon: "◈",
   },
   "product-lines": {
-    label: "Product lines",
-    singular: "product line",
-    description: "Group related models within each brand.",
+    label: "Líneas de productos",
+    singular: "línea de productos",
+    description: "Agrupá los modelos relacionados de cada marca.",
     icon: "≡",
   },
   applications: {
-    label: "Applications",
-    singular: "application",
-    description: "Define what your printers can be used for.",
+    label: "Aplicaciones",
+    singular: "aplicación",
+    description: "Definí los usos de tus impresoras.",
     icon: "◇",
   },
   tags: {
-    label: "Tags",
-    singular: "tag",
-    description: "Add useful labels to organize your catalog.",
+    label: "Etiquetas",
+    singular: "etiqueta",
+    description: "Agregá etiquetas útiles para organizar tu catálogo.",
     icon: "#",
   },
   attributes: {
-    label: "Technical attributes",
-    singular: "attribute",
-    description: "Define the specifications used to compare printers.",
+    label: "Atributos técnicos",
+    singular: "atributo",
+    description: "Definí las especificaciones para comparar impresoras.",
     icon: "⊞",
   },
   downloads: {
-    label: "Documents",
-    singular: "document",
-    description: "Manage brochures, datasheets, and product manuals.",
+    label: "Documentos",
+    singular: "documento",
+    description: "Administrá folletos, fichas técnicas y manuales de productos.",
     icon: "▧",
   },
 } as const;
@@ -118,9 +118,9 @@ export type Page = {
   meta: { page: number; pageSize: number; total: number; totalPages: number };
 };
 export const statusLabels: Record<Status, string> = {
-  DRAFT: "Draft",
-  PUBLISHED: "Published",
-  ARCHIVED: "Archived",
+  DRAFT: "Borrador",
+  PUBLISHED: "Publicado",
+  ARCHIVED: "Archivado",
 };
 export function slugify(value: string) {
   return value
@@ -156,27 +156,27 @@ export function specPayload(items: Spec[], attributes: CatalogRecord[]) {
   return items.map((item) => {
     const attribute = attributes.find((a) => a.id === item.attributeId);
     if (!attribute)
-      throw new Error("Choose an attribute for every specification.");
+      throw new Error("Elegí un atributo para cada especificación.");
     let value: string | number | boolean;
     if (attribute.type === "NUMBER") {
       if (item.numberValue === null || String(item.numberValue).trim() === "")
-        throw new Error("Enter a number for " + attribute.name + ".");
+        throw new Error("Ingresá un número para " + attribute.name + ".");
       value = Number(item.numberValue);
       if (
         !Number.isFinite(value) ||
         Math.abs(value) > 9999999999.9999 ||
         Math.abs(value * 10000 - Math.round(value * 10000)) > 0.001
       )
-        throw new Error("Use a valid number with at most four decimal places.");
+        throw new Error("Usá un número válido con hasta cuatro decimales.");
     } else if (attribute.type === "BOOLEAN") value = item.booleanValue ?? false;
     else {
       value = item.textValue?.trim() ?? "";
-      if (!value) throw new Error("Enter a value for " + attribute.name + ".");
+      if (!value) throw new Error("Ingresá un valor para " + attribute.name + ".");
       if (
         attribute.type === "ENUM" &&
         !attribute.allowedValues?.includes(value)
       )
-        throw new Error("Choose a valid option for " + attribute.name + ".");
+        throw new Error("Elegí una opción válida para " + attribute.name + ".");
     }
     return {
       attributeId: item.attributeId,
@@ -186,3 +186,16 @@ export function specPayload(items: Spec[], attributes: CatalogRecord[]) {
     };
   });
 }
+
+export const tabLabels: Record<string, string> = {
+  information: "Información", categories: "Categorías", applications: "Aplicaciones",
+  tags: "Etiquetas", stock: "Existencias", specifications: "Especificaciones",
+  images: "Imágenes", videos: "Videos",
+};
+export const roleLabels: Record<User["role"], string> = {
+  ADMIN: "Administrador", EDITOR: "Editor", VIEWER: "Solo lectura",
+};
+export const typeLabels: Record<string, string> = {
+  TEXT: "Texto", NUMBER: "Número", BOOLEAN: "Sí / no", ENUM: "Opción de una lista",
+  BROCHURE: "Folleto", DATASHEET: "Ficha técnica", MANUAL: "Manual", OTHER: "Otro",
+};
