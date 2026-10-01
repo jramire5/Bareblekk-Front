@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { allRecords, apiBase, recordPath, request } from "../lib/api";
 import {
   allowedStatuses,
@@ -31,6 +31,7 @@ export default function EntityEditor({
   const dialog = useRef<HTMLDialogElement>(null),
     [recordId, setRecordId] = useState(id),
     [row, setRow] = useState<CatalogRecord | null>(null);
+  const pointerStartedOutside = useRef(false);
   const [lookups, setLookups] = useState<Lookups>({}),
     [loading, setLoading] = useState(true),
     [busy, setBusy] = useState(false),
@@ -46,6 +47,16 @@ export default function EntityEditor({
   function close() {
     if (!busy && (!dirty || window.confirm("¿Descartar los cambios sin guardar?")))
       onClose();
+  }
+  function isOutsideDialog(event: MouseEvent<HTMLDialogElement>) {
+    if (event.target !== event.currentTarget) return false;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    return (
+      event.clientX < bounds.left ||
+      event.clientX > bounds.right ||
+      event.clientY < bounds.top ||
+      event.clientY > bounds.bottom
+    );
   }
   useEffect(() => {
     dialog.current?.showModal();
@@ -211,6 +222,17 @@ export default function EntityEditor({
       ref={dialog}
       className="editor-dialog"
       aria-labelledby="editor-title"
+      onPointerDown={(e) => {
+        pointerStartedOutside.current = isOutsideDialog(e);
+      }}
+      onPointerCancel={() => {
+        pointerStartedOutside.current = false;
+      }}
+      onClick={(e) => {
+        const dismiss = pointerStartedOutside.current && isOutsideDialog(e);
+        pointerStartedOutside.current = false;
+        if (dismiss) close();
+      }}
       onCancel={(e) => {
         e.preventDefault();
         close();

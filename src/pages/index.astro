@@ -4,11 +4,6 @@
 import '../styles/landing.css';
 import Icon from '../components/LandingIcon.astro';
 
-const solutions = [
-  { number: '01', title: 'Impresión y corte', category: 'GRÁFICA Y COMUNICACIÓN VISUAL', image: '/images/landing/print-cut.png', alt: 'Impresora y cortadora de gran formato Mimaki CJV330', description: 'Dé vida a sus proyectos de señalética, cartelería y rotulación con color y definición.', tags: ['Cartelería', 'Vinilos', 'Señalética'] },
-  { number: '02', title: 'Impresión textil', category: 'DISEÑO QUE SE TRANSFORMA', image: '/images/landing/textile.png', alt: 'Impresora de sublimación textil Mimaki TS330-1600', description: 'Lleve sus diseños a telas, indumentaria y nuevos proyectos de personalización.', tags: ['Sublimación', 'Indumentaria', 'Decoración'] },
-  { number: '03', title: 'Impresión UV', category: 'NUEVAS APLICACIONES', image: '/images/landing/uv.png', alt: 'Impresora UV LED Mimaki UCJV330', description: 'Explore nuevas posibilidades de impresión para comunicación visual y materiales de exhibición.', tags: ['UV LED', 'Gráfica', 'Exhibición'] },
-];
 const services = [
   { number: '01', title: 'Asesoramiento', text: 'Lo ayudamos a identificar la tecnología adecuada para sus materiales, aplicaciones y objetivos de producción.', icon: 'chat' },
   { number: '02', title: 'Equipos e insumos', text: 'Acercamos soluciones de impresión digital e insumos para acompañar el trabajo de su empresa.', icon: 'printer' },
@@ -47,34 +42,30 @@ const services = [
         <div class="container hero-inner">
           <div class="hero-copy">
             <p class="eyebrow"><span class="short-line"></span> TECNOLOGÍA DE IMPRESIÓN DIGITAL</p>
-            <h1 id="hero-title">Sus ideas.<br />Nuestra tecnología.<br /><span>Más posibilidades.</span></h1>
-            <p class="hero-description">Soluciones de impresión que impulsan su trabajo. Equipos Mimaki, insumos y asesoramiento especializado, con el respaldo de Bareblekk en cada paso.</p>
+            <h1 id="hero-title">Aca va un slogan o <strong>mensaje representativo</strong></h1>
+            <p class="hero-description">lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nisl aliquam nisl, eget ultricies nunc nisl eget nunc.</p>
             <div class="hero-actions"><a href="#catalogo" class="button">Explore las soluciones <Icon name="arrow" /></a><a href="#contacto" class="text-link">Reciba asesoramiento <Icon name="arrow-up" /></a></div>
             <div class="hero-footnote"><span class="brand-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Equipos, insumos y soporte.<br /><strong>Todo para su próxima impresión.</strong></span></div>
           </div>
           <div class="hero-visual">
             <div class="hero-image-heading"><span>PRECISIÓN. COLOR. POSIBILIDADES.</span><Icon name="plus" /></div>
-            <span class="hero-watermark" aria-hidden="true">PRINT</span>
-            <img class="hero-printer" src="/images/landing/print-cut.png" alt="Mimaki CJV330, equipo de impresión y corte de gran formato" width="800" height="460" fetchpriority="high" />
-            <div class="hero-caption"><div><span class="caption-label">IMPRESIÓN Y CORTE</span><p>Mimaki CJV330 Series</p></div><a href="#catalogo" class="circle-link" aria-label="Explorar soluciones de impresión"><Icon name="arrow" /></a></div>
+            <div id="hero-product"><p class="hero-image-fallback">Explore las posibilidades de impresión.</p></div>
           </div>
         </div>
       </section>
       <section class="trust-strip" aria-label="Respaldo y servicios">
         <div class="container trust-inner">
-          <div class="official-brand"><span class="mimaki-wordmark">Mimaki</span><span>Distribuidor oficial<br /><strong>Respaldo para su producción</strong></span></div>
+          <div class="official-brand"><img class="mimaki-logo" src="/brand/mimaki.png" alt="Mimaki" width="320" height="59" loading="lazy" /><span>Distribuidor oficial<br /><strong>Respaldo para su producción</strong></span></div>
           <div class="trust-item"><Icon name="printer" /><span>Equipos e insumos</span></div><div class="trust-item"><Icon name="tool" /><span>Servicio técnico</span></div><div class="trust-item"><Icon name="chat" /><span>Asesoramiento especializado</span></div>
         </div>
       </section>
       <section class="catalog section-space" id="catalogo" aria-labelledby="catalog-title">
         <div class="container">
           <div class="section-heading"><div><p class="eyebrow">SOLUCIONES DE IMPRESIÓN</p><h2 id="catalog-title">Una tecnología para<br />cada posibilidad.</h2></div><p>Encuentre el punto de partida para su próximo proyecto. Explore las aplicaciones y consulte a nuestro equipo por modelos y disponibilidad.</p></div>
-          <div class="solutions-grid">
-            {solutions.map(solution => <article class="solution-card">
-              <div class="solution-image"><span class="solution-number">{solution.number} /</span><img src={solution.image} alt={solution.alt} width="800" height="460" loading="lazy" /></div>
-              <div class="solution-content"><p class="card-eyebrow">{solution.category}</p><h3>{solution.title}</h3><p class="solution-description">{solution.description}</p><ul class="tags" aria-label="Aplicaciones">{solution.tags.map(tag => <li>{tag}</li>)}</ul><a class="solution-link" href="#contacto" data-interest={solution.title}>Consultar solución <Icon name="arrow" /><span class="sr-only"> de {solution.title.toLowerCase()}</span></a></div>
-            </article>)}
-          </div>
+          <p id="catalog-status" class="catalog-status" role="status">Cargando equipos…</p>
+          <button id="catalog-retry" class="button" type="button" hidden>Intentar nuevamente</button>
+          <div class="solutions-grid" id="public-products" aria-busy="true"></div>
+          <noscript><p class="catalog-status">Active JavaScript para consultar los equipos publicados o <a href="#contacto">solicite asesoramiento</a>.</p><style>#catalog-status{display:none}</style></noscript>
           <div class="catalog-help"><span><Icon name="chat" /> ¿Necesita orientación para elegir?</span><a class="text-link" href="#contacto">Lo ayudamos a encontrar su equipo <Icon name="arrow-up" /></a></div>
         </div>
       </section>
@@ -91,7 +82,7 @@ const services = [
             <div class="form-heading"><h3>¿En qué podemos ayudarlo?</h3><p>Los campos con * son obligatorios.</p></div>
             <div class="form-row"><label>Nombre y apellido *<input name="name" autocomplete="name" placeholder="Su nombre completo" maxlength="100" required /></label><label>Empresa<input name="company" autocomplete="organization" placeholder="Nombre de su empresa" maxlength="120" /></label></div>
             <label>Correo electrónico *<input name="email" type="email" autocomplete="email" placeholder="usted@empresa.com" maxlength="160" required /></label>
-            <label>Me interesa<select id="interest" name="interest"><option value="Asesoramiento general">Asesoramiento general</option>{solutions.map(solution => <option value={solution.title}>{solution.title}</option>)}<option value="Insumos">Insumos</option><option value="Servicio técnico">Servicio técnico</option></select></label>
+            <label>Me interesa<select id="interest" name="interest"><option value="Asesoramiento general">Asesoramiento general</option><optgroup id="product-interests" label="Equipos publicados"></optgroup><option value="Insumos">Insumos</option><option value="Servicio técnico">Servicio técnico</option></select></label>
             <label>Cuéntenos sobre su proyecto *<textarea name="message" rows="3" placeholder="¿Qué le gustaría imprimir o qué necesita resolver?" maxlength="1500" required></textarea></label>
             <p class="form-note" id="form-note">Al continuar se abrirá su aplicación de correo con la consulta preparada para que usted pueda revisarla y enviarla.</p>
             <button class="button submit-button" type="submit" aria-describedby="form-note">Preparar consulta <Icon name="arrow" /></button>
@@ -103,6 +94,10 @@ const services = [
     </main>
     <footer class="site-footer"><div class="container"><div class="footer-main"><div><a class="brand-logo" href="#inicio" aria-label="Bareblekk, volver al inicio"><img src="/brand/bareblekk.svg" alt="Bareblekk" width="212" height="40" loading="lazy" /></a><p>Equipos, insumos y soporte<br />en tecnología de impresión digital.</p></div><nav aria-label="Navegación del pie de página"><a href="#catalogo">Soluciones de impresión</a><a href="#nosotros">Nosotros</a><a href="#contacto">Contacto</a></nav><a href="#inicio" class="back-top">Volver al inicio <Icon name="arrow-up" /></a></div><div class="footer-bottom"><span>© {new Date().getFullYear()} Bareblekk. Todos los derechos reservados.</span><span>Tecnología de impresión. Respaldo en cada paso.</span></div></div></footer>
     <script>
+      import { mountLandingCatalog } from '../lib/landing-catalog';
+      let cleanupCatalog = mountLandingCatalog();
+      window.addEventListener('pagehide', () => cleanupCatalog());
+      window.addEventListener('pageshow', event => { if (event.persisted) cleanupCatalog = mountLandingCatalog(); });
       const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
       menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
       document.addEventListener('keydown', event => {
@@ -112,8 +107,9 @@ const services = [
         if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
       });
       const interest = document.querySelector<HTMLSelectElement>('#interest');
-      document.querySelectorAll<HTMLAnchorElement>('[data-interest]').forEach(link => {
-        link.addEventListener('click', () => { if (interest) interest.value = link.dataset.interest ?? 'Asesoramiento general'; });
+      document.addEventListener('click', event => {
+        const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('[data-interest]') : null;
+        if (interest && link) interest.value = link.dataset.interest ?? 'Asesoramiento general';
       });
       const form = document.querySelector<HTMLFormElement>('#inquiry-form');
       const status = document.querySelector<HTMLParagraphElement>('#form-status');

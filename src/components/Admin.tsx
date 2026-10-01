@@ -73,7 +73,7 @@ function Login({
     <main className="login-layout">
       <section className="login-brand">
         <a className="brand" href="/">
-          bareblekk<span>®</span>
+          <img src="/brand/bareblekk.svg" alt="Bareblekk" width="212" height="40" />
         </a>
         <div>
           <p className="eyebrow">ESPACIO DEL CATÁLOGO</p>
@@ -82,10 +82,6 @@ function Login({
             <br />
             Presentados con claridad.
           </h1>
-          <p>
-            Un espacio dedicado a las impresoras, los detalles y la experiencia de
-            tu catálogo.
-          </p>
         </div>
         <span className="login-foot">BAREBLEKK / ADMINISTRACIÓN</span>
       </section>
@@ -123,9 +119,7 @@ function Login({
               <span aria-hidden="true">→</span>
             </button>
           </fieldset>
-          <p className="small muted">
-            Tu administrador gestiona el acceso.
-          </p>
+          <p className="small muted">Tu administrador gestiona el acceso.</p>
         </form>
       </section>
     </main>
@@ -251,7 +245,7 @@ export default function Admin() {
     return (
       <main className="entry">
         <div className="brand">
-          bareblekk<span>®</span>
+          <img src="/brand/bareblekk.svg" alt="Bareblekk" width="212" height="40" />
         </div>
         <p role="status">Verificando tu sesión…</p>
       </main>
@@ -275,7 +269,7 @@ export default function Admin() {
       </a>
       <aside className="sidebar">
         <a className="brand" href="/admin/">
-          bareblekk<span>®</span>
+          <img src="/brand/bareblekk.svg" alt="Bareblekk" width="212" height="40" />
         </a>
         <p className="workspace-label">ADMINISTRACIÓN DEL CATÁLOGO</p>
         <nav aria-label="Secciones del catálogo">
@@ -295,14 +289,6 @@ export default function Admin() {
             </a>
           ))}
         </nav>
-        <div className="sidebar-note">
-          <span className="eyebrow">PENSADO PARA TU CATÁLOGO</span>
-          <p>
-            Cada detalle ayuda
-            <br />
-            a encontrar la impresora ideal.
-          </p>
-        </div>
         <div className="account">
           <span className="avatar" aria-hidden="true">
             {user.name?.slice(0, 1).toUpperCase() || "B"}
@@ -358,8 +344,8 @@ export default function Admin() {
           </div>
           {user.role === "VIEWER" && (
             <p className="notice">
-              Tu cuenta tiene acceso de solo lectura. Podés consultar los registros,
-              pero no modificarlos.
+              Tu cuenta tiene acceso de solo lectura. Podés consultar los
+              registros, pero no modificarlos.
             </p>
           )}
           {toast && (
@@ -474,7 +460,7 @@ export default function Admin() {
                             ? row.sku || "—"
                             : resource === "attributes" ||
                                 resource === "downloads"
-                              ? typeLabels[row.type ?? ""] ?? "—"
+                              ? (typeLabels[row.type ?? ""] ?? "—")
                               : row.slug}
                         </td>
                         <td>
@@ -574,8 +560,8 @@ export default function Admin() {
             </footer>
           </section>
           <p className="page-note">
-            Los cambios se guardan en tu catálogo Bareblekk. Podés restaurar los registros
-            archivados desde su editor.
+            Los cambios se guardan en tu catálogo Bareblekk. Podés restaurar los
+            registros archivados desde su editor.
           </p>
         </main>
       </div>
